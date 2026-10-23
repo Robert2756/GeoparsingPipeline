@@ -4,11 +4,17 @@ task:
 data:
   languages: [de, en]
   genres: [wikipedia, news]
-  gold_per_cell: 40
-  pool_per_cell: 400
+  gold_per_cell: 40 # target number of documents per cell
+  pool_per_cell: 400 # target number of additional documents for the pool per cell
   snippet_sentences: 3
   seed: 42
 llm:
   backend: ollama
   model: llama3.1:8b
   temperature: 0.0
+
+# cells:
+# English + Wikipedia
+# German + Wikipedia
+# English + News
+# German + News
