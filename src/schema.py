@@ -21,11 +21,13 @@ class Span(BaseModel):             # represents one place mention in a text, tog
     lon: float | None = None
     confidence: float | None = None
     source: Literal["human", "llm", "model"]
+    flags: list[str] = []          # "fig", "unsure", "hist"
 
 class Annotation(BaseModel):       # groups multiple spans for a single document
     doc_id: str
     annotator: str                 # e.g. "gold_v1", "llama3.1-8b_fewshot"
     spans: list[Span]
+    excluded: bool = False
 
 def check_offsets(doc: Doc, ann: Annotation) -> None: # compare original text against annotation
     for s in ann.spans:
