@@ -1,10 +1,10 @@
 import argparse
 import ast
 import random
-from pathlib import Path
 import re
+from pathlib import Path
 
-import pysbd # for the sentence segmenter
+import pysbd  # for the sentence segmenter
 import yaml
 from datasets import load_dataset
 
@@ -23,7 +23,7 @@ STOP_HEADINGS = {
     "quellen", "fußnoten", "schriften", "werke",
     "notes et références", "références", "bibliographie", "liens externes", "voir aussi",
 }
-CITATION_RE = re.compile(r"\bISBN\b|\bISSN\b|\bdoi:|\bRetrieved\b|\bpp?\.\s*\d|https?://", re.I)
+CITATION_RE = re.compile(r"\bISBN\b|\bISSN\b|\bdoi:|\bRetrieved\b|\bpp?\.\s*\d|https?://", re.IGNORECASE)
 # "bin.The" -> "bin. The" (Wikinews joins list items without a space)
 GLUED_RE = re.compile(r"(?<=[a-zäöüéèàáíóúñ]{2}[.!?])(?=[A-ZÄÖÜÉÈÀÁÍÓÚÑ])")
 
@@ -129,4 +129,7 @@ if __name__ == "__main__":
     ap.add_argument("--out", default="data")
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args()
-    build(yaml.safe_load(open(a.config)), Path(a.out), a.dry_run)
+    with open(a.config, encoding="utf-8") as f:
+        cfg = yaml.safe_load(f)
+
+    build(cfg, Path(a.out), a.dry_run)

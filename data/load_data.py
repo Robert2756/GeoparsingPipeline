@@ -1,5 +1,6 @@
-from datasets import load_dataset
 from collections import Counter
+
+from datasets import load_dataset
 
 # wikinews dataset specs
 ds = load_dataset("Fumika/Wikinews-multilingual", split="train", streaming=True)
