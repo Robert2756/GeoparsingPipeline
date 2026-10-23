@@ -1,0 +1,14 @@
+task:
+  labels: [LOC]
+  resolve_to: geonames
+data:
+  languages: [de, en]
+  genres: [wikipedia, news]
+  gold_per_cell: 40
+  pool_per_cell: 400
+  snippet_sentences: 3
+  seed: 42
+llm:
+  backend: ollama
+  model: llama3.1:8b
+  temperature: 0.0
