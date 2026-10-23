@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
-from src.schema import Doc, Annotation
+
+from src.schema import Annotation, Doc
+
 
 class Annotator(ABC):
     name: str

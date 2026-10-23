@@ -1,4 +1,5 @@
-from src.schema import Doc, Span, Annotation, check_offsets
+from src.schema import Annotation, Doc, Span, check_offsets
+
 
 def test_offsets_ok():
     doc = Doc(id="d1", lang="de", genre="news", text="Paris liegt an der Seine.")

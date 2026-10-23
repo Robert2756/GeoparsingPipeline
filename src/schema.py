@@ -1,5 +1,7 @@
 from typing import Literal
+
 from pydantic import BaseModel
+
 
 class Doc(BaseModel):              # represents an input document
     id: str
