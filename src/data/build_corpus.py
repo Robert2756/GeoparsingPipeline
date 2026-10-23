@@ -2,6 +2,7 @@ import argparse
 import ast
 import random
 from pathlib import Path
+import re
 
 import pysbd # for the sentence segmenter
 import yaml
@@ -12,11 +13,30 @@ from src.schema import Doc
 
 MIN_PARA_CHARS = 200
 MIN_SNIPPET_CHARS, MAX_SNIPPET_CHARS = 150, 700
-WIKI_CONFIG = "20231101.en"
+WIKI_CONFIG = "20231101.{lang}"
+
+# exclude reference type texts
+STOP_HEADINGS = {
+    "references", "bibliography", "further reading", "external links", "see also",
+    "sources", "notes", "footnotes", "publications", "works",
+    "einzelnachweise", "literatur", "weblinks", "anmerkungen", "siehe auch",
+    "quellen", "fußnoten", "schriften", "werke",
+    "notes et références", "références", "bibliographie", "liens externes", "voir aussi",
+}
+CITATION_RE = re.compile(r"\bISBN\b|\bISSN\b|\bdoi:|\bRetrieved\b|\bpp?\.\s*\d|https?://", re.I)
+# "bin.The" -> "bin. The" (Wikinews joins list items without a space)
+GLUED_RE = re.compile(r"(?<=[a-zäöüéèàáíóúñ]{2}[.!?])(?=[A-ZÄÖÜÉÈÀÁÍÓÚÑ])")
 
 # extract wiki paragraphs
 def wiki_paragraphs(text: str) -> list[str]:
-    return [p.strip() for p in text.split("\n") if len(p.strip()) >= MIN_PARA_CHARS]
+    paras = []
+    for line in text.split("\n"):
+        line = line.strip()
+        if line.lower().rstrip(":") in STOP_HEADINGS:
+            break  # everything after is references / literature
+        if len(line) >= MIN_PARA_CHARS and len(CITATION_RE.findall(line)) < 2:
+            paras.append(line)
+    return paras
 
 
 # extract news paragraphs
@@ -43,6 +63,7 @@ def make_snippet(paras, seg, n_sent, rng): # rng -> random number generator
     paras = list(paras)
     rng.shuffle(paras)
     for para in paras:
+        para = GLUED_RE.sub(" ", para) # remove r.T -> r. T so the segmentator works
         sents = [s.strip() for s in seg.segment(para) if s.strip()] # split each paragraph into sentences
         if len(sents) < n_sent: # if paragraph has not enough sentences skip
             continue
@@ -87,6 +108,7 @@ def build(cfg, out_dir: Path, dry_run: bool):
                                     genre=genre, text=snip, source_ref=url))
                 if len(docs) >= gold_n + pool_n:
                     break
+            source.close()
             if len(docs) < gold_n + pool_n:
                 print(f"WARNING {lang}/{genre}: only {len(docs)} of {gold_n + pool_n}")
             gold += docs[:gold_n] # first 40 documents

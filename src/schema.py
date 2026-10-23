@@ -9,6 +9,7 @@ class Doc(BaseModel):              # represents an input document
     genre: str                     # "wikipedia" | "news"
     text: str
     source_ref: str | None = None  # URL or title, needed for attribution
+    group_id: str | None = None    # keep gold and pool disjoint
 
 class Span(BaseModel):             # represents one place mention in a text, together with additional information
     start: int                     # character offset, inclusive
