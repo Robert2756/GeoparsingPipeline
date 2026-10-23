@@ -1,1 +1,3 @@
-Geopipeline
+# Geopipeline
+
+The goal is to identify the geographical locations mentioned in a text, not simply assign the town an article is about.
