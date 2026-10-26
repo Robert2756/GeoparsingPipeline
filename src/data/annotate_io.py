@@ -3,7 +3,7 @@ import re
 from itertools import zip_longest
 from pathlib import Path
 
-from src.io import read_jsonl, write_jsonl
+from ..json_io import read_jsonl, write_jsonl
 from src.schema import Annotation, Doc, Span, check_offsets
 
 GOLD_DOCS = Path("data/gold/docs.jsonl")

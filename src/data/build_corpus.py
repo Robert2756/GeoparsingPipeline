@@ -8,7 +8,7 @@ import pysbd  # for the sentence segmenter
 import yaml
 from datasets import load_dataset
 
-from src.io import write_jsonl
+from src.json_io import write_jsonl
 from src.schema import Doc
 
 MIN_PARA_CHARS = 200
