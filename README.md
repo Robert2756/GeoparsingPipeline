@@ -34,8 +34,6 @@ Mit:
 
 Die Guidelines nach denen händisch gelabelt wurden liegen unter ./docs/annotation_guideline.md
 
-<img src="docs/docMining.png" alt="Document Fetching and Labeling Pipeline" width="500">
-
 ## LLM Prediction
 
 Die Vorhersage des Ollama Models (llama3.1:8b) erfolgt auf zwei verschiedenen Wegen, die verglichen werden. Erstens mit Zugabe von Regeln:
@@ -87,46 +85,50 @@ In der Evaluations-Pipeline werden Precision, Recall und F1-Score für jede Zell
 
 ## Ergebnisse Mit Regeln
 
+Bei der Vorhersage des Modells kommt es sechs mal zu einer unendlichen Wiederholung von Orten in der Antwort, diese werden als ungültig gewertet.
+
 ### strict (strenger Vergleich)
 
 | Dataset | Documents | Gold Spans | Precision | Recall | F1 |
 |:--|--:|--:|--:|--:|--:|
-| **All** | **160** | **222** | **0.54** | **0.93** | **0.69** |
-| de/news | 40 | 67 | 0.58 | 0.93 | 0.71 |
-| de/wikipedia | 40 | 36 | 0.36 | 0.92 | 0.52 |
-| en/news | 40 | 63 | 0.59 | 0.87 | 0.70 |
-| en/wikipedia | 40 | 56 | 0.64 | 1.00 | 0.78 |
+| **All** | **160** | **222** | **0.45** | **0.90** | **0.60** |
+| de/news | 40 | 67 | 0.46 | 0.93 | 0.62 |
+| de/wikipedia | 40 | 36 | 0.27 | 0.81 | 0.41 |
+| en/news | 40 | 63 | 0.54 | 0.87 | 0.67 |
+| en/wikipedia | 40 | 56 | 0.54 | 0.96 | 0.69 |
 
 ### lenient (nachsichtiger Vergleich)
 
 | Dataset | Documents | Gold Spans | Precision | Recall | F1 |
 |:--|--:|--:|--:|--:|--:|
-| **All** | **160** | **222** | **0.55** | **0.94** | **0.70** |
-| de/news | 40 | 67 | 0.59 | 0.94 | 0.72 |
-| de/wikipedia | 40 | 36 | 0.37 | 0.94 | 0.54 |
-| en/news | 40 | 63 | 0.60 | 0.89 | 0.71 |
-| en/wikipedia | 40 | 56 | 0.64 | 1.00 | 0.78 |
+| **All** | **160** | **222** | **0.47** | **0.94** | **0.63** |
+| de/news | 40 | 67 | 0.47 | 0.94 | 0.63 |
+| de/wikipedia | 40 | 36 | 0.32 | 0.94 | 0.48 |
+| en/news | 40 | 63 | 0.55 | 0.89 | 0.68 |
+| en/wikipedia | 40 | 56 | 0.56 | 1.00 | 0.72 |
 
 ## Ergebnisse Ohne Regeln
 
+Im Gegensatz zum Prompt mit Regeln, kommt es ohne Zugabe von Regeln zu keinen unendlichen Wiederholungen in den Antworten.
+
 ### strict (strenger Vergleich)
 
 | Dataset | Documents | Gold Spans | Precision | Recall | F1 |
 |:--|--:|--:|--:|--:|--:|
-| **All** | **160** | **222** | **0.54** | **0.93** | **0.69** |
-| de/news | 40 | 67 | 0.58 | 0.93 | 0.71 |
-| de/wikipedia | 40 | 36 | 0.36 | 0.92 | 0.52 |
-| en/news | 40 | 63 | 0.59 | 0.87 | 0.70 |
-| en/wikipedia | 40 | 56 | 0.64 | 1.00 | 0.78 |
+| **All** | **160** | **222** | **0.59** | **0.95** | **0.73** |
+| de/news | 40 | 67 | 0.71 | 0.93 | 0.81 |
+| de/wikipedia | 40 | 36 | 0.42 | 0.97 | 0.59 |
+| en/news | 40 | 63 | 0.65 | 0.97 | 0.78 |
+| en/wikipedia | 40 | 56 | 0.56 | 0.96 | 0.71 |
 
 ### lenient (nachsichtiger Vergleich)
 
 | Dataset | Documents | Gold Spans | Precision | Recall | F1 |
 |:--|--:|--:|--:|--:|--:|
-| **All** | **160** | **222** | **0.55** | **0.94** | **0.70** |
-| de/news | 40 | 67 | 0.59 | 0.94 | 0.72 |
-| de/wikipedia | 40 | 36 | 0.37 | 0.94 | 0.54 |
-| en/news | 40 | 63 | 0.60 | 0.89 | 0.71 |
-| en/wikipedia | 40 | 56 | 0.64 | 1.00 | 0.78 |
+| **All** | **160** | **222** | **0.60** | **0.98** | **0.74** |
+| de/news | 40 | 67 | 0.72 | 0.94 | 0.82 |
+| de/wikipedia | 40 | 36 | 0.43 | 1.00 | 0.61 |
+| en/news | 40 | 63 | 0.66 | 0.98 | 0.79 |
+| en/wikipedia | 40 | 56 | 0.58 | 1.00 | 0.73 |
 
 ## Auswertung
