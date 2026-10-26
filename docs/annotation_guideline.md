@@ -22,6 +22,7 @@ Goal: mark every geographic place name (toponym) in the text.
 - Streets, buildings, stations, stadiums, airports.
 - Fictional places.
 - Words that do not reference the place but the name itself: similarity between the names of  "Swaziland" and "Switzerland".
+- Place names inside phrases: "Viva España!" (Long live Spain!)
 
 ## Flags (after a pipe inside the brackets)
 - |fig    name stands for a government, team, or population, not the territory
