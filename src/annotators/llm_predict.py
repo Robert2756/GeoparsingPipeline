@@ -14,17 +14,20 @@ Answer as JSON: {"places": [...]} with each place name exactly as written in the
 Use an empty list if there are none.
 
 Rules:
-- Include countries, regions, states, cities, towns, villages, continents, islands, mountains, rivers, lakes and seas.
-- Include short forms like US or UK when they mean the country.
-- Include a country or city that stands for its government or team ("lost 0:1 against Spain").
-- Give only the name: no article, preposition or possessive 's.
-- Do NOT include demonyms or adjectives (German, schweizerisch).
-- Do NOT include place names that are part of the name of an organization, party, team, event, work, title or person (Bank of England, Boston Celtics, Washington Irving).
-- Do NOT include streets, buildings, stations, airports or named facilities such as mines, ranches or hotels.
-- Do NOT include currency codes (US$) or fictional places.
-- Only list places that are literally written in the text. Never add places that are merely implied.
-- Words that do not reference the place but the name itself: similarity between the names of  "Swaziland" and "Switzerland".
-- Place names inside phrases: "Viva España!" (Long live Spain!)"""
+- Include countries, regions, states, provinces, counties, cities, towns, villages, continents, islands, mountains, rivers, lakes, seas and oceans.
+- Include informal named regions (Middle East, East Coast) and historical places (Yugoslavia).
+- Include short forms such as US or UK when they mean the country.
+- Include a country or city that stands for its government, team or population ("Berlin decided", "lost 0:1 against Spain").
+- Give only the name: no article, preposition or possessive 's ("Canada's capital" -> "Canada").
+- Keep generic words that belong to the name ("Lake Victoria", "Orange County").
+- List nested places separately ("Tupelo, Mississippi" -> "Tupelo" and "Mississippi").
+- Do NOT include demonyms or adjectives (German, schweizerisch, Czech).
+- Do NOT include place names that are part of the name of an organization, party, team, event, work, title or person (Bank of England, Boston Celtics, Washington Irving). The EU is an organization, not a place.
+- Do NOT include streets, buildings, stations, stadiums, airports or named facilities such as mines, ranches or hotels.
+- Do NOT include currency codes such as US$ or fictional places.
+- Do NOT include a word that is only mentioned as a word and not as the place ("Swaziland" and "Switzerland" sound alike).
+- Do NOT include place names inside fixed phrases or exclamations ("Viva España!").
+- Only list places that are literally written in the text. Never add places that are merely implied."""
 
 
 class Places(BaseModel):
