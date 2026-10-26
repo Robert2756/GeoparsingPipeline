@@ -37,6 +37,7 @@ def _overlap(a: Span, b: Span) -> bool:
     return a.start < b.end and b.start < a.end
 
 
+# called for each doc
 def match_doc(gold: list[Span], pred: list[Span], mode: str = "strict",
               ignore_flags: frozenset[str] = frozenset()) -> Counts:
     ignorable = [g for g in gold if set(g.flags) & ignore_flags]
@@ -68,15 +69,15 @@ def evaluate(docs: list[Doc], gold: list[Annotation], pred: list[Annotation],
     p_by = {a.doc_id: a for a in pred}
     groups: dict[str, list[Counts]] = {"all": []}
     for d in docs:
-        if d.id not in g_by:  # only annotated, non-excluded items count
+        if d.id not in g_by:  # document was not annotated
             continue
-        p = p_by[d.id].spans if d.id in p_by else []
+        p = p_by[d.id].spans if d.id in p_by else [] # has document a prediction?
         c = match_doc(g_by[d.id].spans, p, mode)
         for key in ("all", f"{d.lang}/{d.genre}"):
             groups.setdefault(key, []).append(c)
     rows = []
-    for name, cs in sorted(groups.items()):
-        tot = sum(cs, Counts())
+    for name, cs in sorted(groups.items()): # cs is a list of Counts
+        tot = sum(cs, Counts()) # added by internal Count add function
         rows.append({"group": name, "docs": len(cs), "gold_spans": tot.tp + tot.fn,
                      "precision": tot.precision, "recall": tot.recall, "f1": tot.f1})
     return rows

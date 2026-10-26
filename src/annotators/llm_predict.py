@@ -54,7 +54,7 @@ def predict(doc: Doc, prompt: str, tag: str) -> Annotation:
         messages=[{"role": "system", "content": prompt},
                   {"role": "user", "content": f"Text: {doc.text}"}],
         format=Places.model_json_schema(),
-        options={"temperature": 0, "seed": 0, "num_predict": 256,},
+        options={"temperature": 0, "seed": 0, "num_predict": 256}, # 256 generated tokens per document -> avoids repetition loop
     )
 
     # print("Prompt: ", prompt)
