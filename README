@@ -44,7 +44,8 @@ Die Vorhersage des Ollama Models (llama3.1:8b) erfolgt auf zwei verschiedenen We
 
 Die Regeln spiegeln dabei die händische labeling guideline wieder:
 
-```Extract all geographic place names (toponyms) from the text. \
+```text
+Extract all geographic place names (toponyms) from the text. \
 Answer as JSON: {"places": [...]} with each place name exactly as written in the text. \
 Use an empty list if there are none.
 
@@ -71,7 +72,8 @@ Zweitens, ohne Zugabe von Regeln:
 
 Der Prompt hat nun keine Regeln:
 
-```Extract all geographic place names (toponyms) from the text. \
+```text
+Extract all geographic place names (toponyms) from the text. \
 Answer as JSON: {"places": [...]} with each place name exactly as written in the text. \
 Use an empty list if there are none.
 ```
