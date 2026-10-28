@@ -150,7 +150,7 @@ Unterschiede in der Anzahl an validen Orten für jede Zelle machen Vergleiche sc
 ### Hypothese für die Regeln.
 Die lange Liste an Regeln könnte das kleine 8B Modell überladen und es eventuell aktiv prompten das zu tun was nicht gefordert wird. Diese Vermutung obliegt jedoch Spekulation.
 
-## Beispiele der Modell Vorhersagen
+## Beispiele der Modellvorhersagen
 
 ### Mit Regeln
 Artikel: "de-news-0008"
