@@ -40,7 +40,7 @@ Die Vorhersage des Ollama Models (llama3.1:8b) erfolgt auf zwei verschiedenen We
 
 <img src="docs/LLM_Rules.png" alt="LLM Vorhersage" width="500">
 
-Die Regeln spiegeln dabei die händische labeling guideline wieder:
+Die Regeln spiegeln dabei die händische labeling guideline wider:
 
 ```text
 Extract all geographic place names (toponyms) from the text. \
@@ -132,9 +132,15 @@ Im Gegensatz zum Prompt mit Regeln, kommt es ohne Zugabe von Regeln zu keinen un
 | en/wikipedia | 40 | 56 | 0.58 | 1.00 | 0.73 |
 
 ## Auswertung
-### Regeln verursachten eine geringere Genauigkeit des Modells.
+### Regeln verschlechterten das Ergebnis.
 
-Der längere Prompt destabilisiert das 8B Modell. Bei Ausgang von ca acht Orten in den sechs Artikeln, welche unendliche Antwortschleifen verursachten, ist das ein großer Faktor für eine geringere Genauigkeit, da die Antwortschleifen als ungültig gewertet werden.
+Mit Regeln sinkt der F1-Wert (strict) von 0,73 auf 0,60 und die Precision von 0,59
+auf 0,45. Das Ziel der Regeln, weniger falsche Orte zu liefern, wurde also verfehlt.
+Zusätzlich kam es nur mit Regeln in 6 von 160 Fällen zu Endlosschleifen, die als
+leere Vorhersage gewertet wurden. Nach grober Schätzung betrifft das etwa acht
+Gold-Spans und senkt den Recall (0,90 statt 0,95). Die geringere Precision erklärt
+das nicht, denn eine leere Vorhersage erzeugt keine falschen Orte. Dass der längere
+Prompt das 8B-Modell überfordert, ist eine plausible, aber ungeprüfte Erklärung.
 
 ### Hoher Recall, geringe Precision.
 
@@ -142,10 +148,16 @@ Es lässt sich feststellen, dass für alle vier Resultate der Recall tendenziell
 
 ### Nachsichtiger Vergleich hat leicht höhere Genauigkeit.
 
-Das war zu erwarten, da der der Nachsichtige Vergleich auch Überschneidungen der Ortsnamen zulässt. Während also beim strengen Vergleich "New York" und "York City" nicht als richtig gewertet werden, ist es beim nachsichtigem Vergleich ein Treffer da sich "York" überschneidet. Das Problem kann hierbei jedoch sein, dass selbst Überschneidungen von nur einem Buchstaben als Treffer gelten, was auch aus Zufall passieren könnte.
+Das war zu erwarten, da der Nachsichtige Vergleich auch Überschneidungen der Ortsnamen zulässt. Während also beim strengen Vergleich "New York" und "York City" nicht als richtig gewertet werden, ist es beim nachsichtigem Vergleich ein Treffer da sich "York" überschneidet. Das Problem kann hierbei jedoch sein, dass selbst Überschneidungen von nur einem Buchstaben als Treffer gelten, was auch aus Zufall passieren könnte.
 
 ### Unterschiede der Datensätze.
-Unterschiede in der Anzahl an validen Orten für jede Zelle machen Vergleiche schwierig. Für die de/wikipedia Zelle mit nur 36 validen Orten wird ein Modell, welches sich Orte ausdenkt, stärker betraft in der Precision Metrik, als in de/news, da dort die Wahrscheinlichkeit höher liegt, dass ein Modell mit hohem Recall sich weniger Orte ausdenkt.
+Die Zellen haben unterschiedlich viele Gold-Spans (36 bis 67). In de/wikipedia
+enthalten 23 von 40 Dokumenten keinen Ort. Jeder dort falsch markierte Ort zählt
+als False Positive und drückt die Precision stärker, weil nur wenige richtige
+Treffer dagegenstehen. Bei 40 Dokumenten pro Zelle sind Unterschiede zwischen den
+Zellen nicht belastbar. Auffällig ist de/wikipedia mit Regeln (Recall strict 0,81,
+lenient 0,94): Hier weichen die Span-Grenzen häufiger ab. Die Ursache wurde nicht
+geprüft.
 
 ### Hypothese für die Regeln.
 Die lange Liste an Regeln könnte das kleine 8B Modell überladen und es eventuell aktiv prompten das zu tun was nicht gefordert wird. Diese Vermutung obliegt jedoch Spekulation.
@@ -155,7 +167,7 @@ Die lange Liste an Regeln könnte das kleine 8B Modell überladen und es eventue
 ### Mit Regeln
 Artikel: "de-news-0008"
 Truth: "Türkei"
-Prediction: "Novemer", "Türkei"
+Prediction: "November", "Türkei"
 
 Artikel: "de-news-0015"
 Truth: Nothing
@@ -164,8 +176,30 @@ Prediction: "Weltall", "Sonnenwind", "Magnetfeld", "Erde", "Magnetosphäre", "Br
 ### Ohne Regeln
 Artikel: "de-news-0008"
 Truth: "Türkei"
-Prediction: "Novemer", "Türkei"
+Prediction: "Novebmer", "Türkei"
 
 Artikel: "de-news-0015"
 Truth: Nothing
 Prediction: "Weltall", "Erde", "Erde", "Magnetosphäre", "Erde", "NASA"
+
+## Einschränkungen
+
+- Ein Annotator, 160 Dokumente (36 bis 67 Gold-Spans pro Zelle), keine
+  Konfidenzintervalle. Unterschiede zwischen den Zellen sind nicht belastbar.
+- Die Guideline wurde während des Labelns entwickelt. Die Prompt-Regeln wurden aus
+  der Guideline abgeleitet, nicht aus der Fehleranalyse, aber auf denselben Daten
+  getestet. Die Werte sind daher eher eine obere Schätzung.
+- Es werden nur Ortsnamen erkannt, nicht aufgelöst (keine Zuordnung zu GeoNames).
+  Das Projekt deckt also nur den ersten Teil des Geoparsings ab.
+- Nur ein Modell (llama3.1:8b), nur Deutsch und Englisch, kein Vergleich mit
+  klassischem NER.
+
+## Reproduzieren
+
+    pip install -r requirements.txt
+    python -m src.data.build_corpus # Aufbau von ./data/gold/docs.json für labeling
+    python -m src.data.annotate_io export --n 50 # neue labeling Runde -> ./data/gold/annotate_round.txt
+    python -m src.data.annotate_io import data/gold/annotate_round.txt # gelabelten Daten in ./data/gold/annotations_v1.json einpflegen
+    python -m src.annotators.llm_predict          # Vorhersage des Modells mit Regeln
+    python -m src.annotators.llm_predict zero     # Vorhersage des Modells ohne Regeln
+    python -m src.eval.run --pred data/predictions/llm_rules.jsonl # Evaluation der Modell Vorhersagen mit den gelabelten Daten
